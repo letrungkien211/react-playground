@@ -7,6 +7,16 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
+import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props'
+// import FacebookLogin from 'react-facebook-login'
+
+import { connect } from "react-redux";
+import { loginAction } from "../actions/authActions";
+
+
+const consoleLog = (_) => {
+  console.log(_)
+}
 
 const styles = {
   root: {
@@ -21,23 +31,40 @@ const styles = {
   },
 };
 
-function ButtonAppBar(props) {
-  const { classes, onClickMenu } = props;
-  return (
-    <div className={classes.root}>
-      <AppBar position="static">
-        <Toolbar>
-          <IconButton onClick={()=> onClickMenu()} className={classes.menuButton} color="inherit" aria-label="Menu">
-            <MenuIcon/>
-          </IconButton>
-          <Typography variant="h6" color="inherit" className={classes.grow}>
-            Play Ground
+class ButtonAppBar extends React.Component {
+  loginCallback = (res) => {
+    console.log(res)
+    this.props.loginAction(res)
+  }
+  render() {
+    const { classes, onClickMenu, auth } = this.props;
+
+    const loginPart = auth.user ? <Typography>{auth.user.name}</Typography> : 
+    <FacebookLogin
+      appId="743868692652250"
+      autoLoad
+      callback={this.loginCallback}
+      render={renderProps => (
+        <Button onClick={renderProps.onClick}>Login</Button>
+      )}
+    />;
+
+    return (
+      <div className={classes.root}>
+        <AppBar position="static">
+          <Toolbar>
+            <IconButton onClick={() => onClickMenu()} className={classes.menuButton} color="inherit" aria-label="Menu">
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" color="inherit" className={classes.grow}>
+              Play Ground
           </Typography>
-          <Button color="inherit">Login</Button>
-        </Toolbar>
-      </AppBar>
-    </div>
-  );
+            {loginPart}
+          </Toolbar>
+        </AppBar>
+      </div>
+    );
+  }
 }
 
 ButtonAppBar.propTypes = {
@@ -45,4 +72,8 @@ ButtonAppBar.propTypes = {
   onClickMenu: PropTypes.func.isRequired
 };
 
-export default withStyles(styles)(ButtonAppBar);
+const mapStateToProps = (state, ownProps) => {
+  return { auth: state.auth }
+}
+
+export default connect(mapStateToProps, { loginAction })(withStyles(styles)(ButtonAppBar));
