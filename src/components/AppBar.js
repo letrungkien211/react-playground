@@ -8,6 +8,7 @@ import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props'
+import Avatar from "@material-ui/core/Avatar";
 // import FacebookLogin from 'react-facebook-login'
 
 import { connect } from "react-redux";
@@ -33,21 +34,27 @@ const styles = {
 
 class ButtonAppBar extends React.Component {
   loginCallback = (res) => {
-    console.log(res)
-    this.props.loginAction(res)
+    if (res && res.id) {
+      this.props.loginAction(res)
+    }
+    else {
+      console.error(res)
+    }
   }
   render() {
     const { classes, onClickMenu, auth } = this.props;
 
-    const loginPart = auth.user ? <Typography>{auth.user.name}</Typography> : 
-    <FacebookLogin
-      appId="743868692652250"
-      autoLoad
-      callback={this.loginCallback}
-      render={renderProps => (
-        <Button onClick={renderProps.onClick}>Login</Button>
-      )}
-    />;
+    const loginPart = auth.user ?
+      <Avatar alt={auth.user.name} src={auth.user.picture.data.url} className={classes.avatar} /> :
+      <FacebookLogin
+        appId="743868692652250"
+        fields="name,email,picture"
+        autoLoad
+        callback={this.loginCallback}
+        render={renderProps => (
+          <Button onClick={renderProps.onClick}>Login</Button>
+        )}
+      />;
 
     return (
       <div className={classes.root}>
