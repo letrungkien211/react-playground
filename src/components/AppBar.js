@@ -1,71 +1,67 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
-import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props'
-import Avatar from "@material-ui/core/Avatar";
-// import FacebookLogin from 'react-facebook-login'
-
-import { connect } from "react-redux";
-import { loginAction } from "../actions/authActions";
+import PersonIcon from '@material-ui/icons/Person';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import HomeIcon from "@material-ui/icons/Home";
+import ExploreIcon from "@material-ui/icons/Explore";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab"
+import AppBar from "@material-ui/core/AppBar";
+import { withRouter } from "react-router";
+import { compose } from "redux";
 
 const styles = {
-  root: {
-    flexGrow: 1,
-  },
-  grow: {
-    flexGrow: 1,
-  },
-  menuButton: {
-    marginLeft: -12,
-    marginRight: 20,
-  },
-  loginImage:{
-    maxWidth: '100%',
-    maxHeight: '100%'
+  root:{
+    position: 'fixed',
+    bottom: 0,
+    width: '100%'
   }
 };
 
 class ButtonAppBar extends React.Component {
-  loginCallback = (res) => {
-    if (res && res.id) {
-      this.props.loginAction(res)
-    }
-    else {
-      console.error(res)
-    }
+  constructor(props){
+    super(props);
   }
-  render() {
-    const { classes, onClickMenu, auth } = this.props;
 
-    const loginPart = auth.user ?
-      <Avatar alt={auth.user.name} src={auth.user.picture.data.url} className={classes.avatar} /> :
-      <FacebookLogin
-        appId="743868692652250"
-        fields="name,email,picture"
-        autoLoad
-        callback={this.loginCallback}
-        render={renderProps => (
-          <Button onClick={renderProps.onClick}><img className={classes.loginImage} src="/static/images/facebook_icon.png"></img></Button>
-        )}
-      />;
+  list =[
+    {
+      label: 'Home',
+      path: '/',
+      icon: <HomeIcon />
+    },
+    {
+      label: 'Favorites',
+      path: '/favorites',
+      icon: <FavoriteIcon />
+    },
+    {
+      label: 'Profile',
+      path: '/profile',
+      icon: <PersonIcon />
+    },
+    {
+      label: 'Test',
+      path: '/test',
+      icon: <ExploreIcon />
+    },
+  ]
+
+  handleChange = (evt, value)=>{
+    this.props.history.push(this.list[value].path)
+  }
+
+  render() {
+    const { classes, location} = this.props;
+    const value = this.list.findIndex(x=> x.path === location.pathname.toLowerCase())    
+    console.log(location)
 
     return (
       <div className={classes.root}>
-        <AppBar position="static" color="default">
-          <Toolbar>
-            <IconButton onClick={() => onClickMenu()} className={classes.menuButton} color="inherit" aria-label="Menu">
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="h6" color="inherit" className={classes.grow}>
-            </Typography>
-            {loginPart}
-          </Toolbar>
+        <AppBar position="static">
+          <Tabs value={value} onChange={this.handleChange} scrollable scrollButtons="off">
+            {this.list.map(x=> <Tab key={x.label} icon={x.icon} />)}
+          </Tabs>
         </AppBar>
       </div>
     );
@@ -73,12 +69,7 @@ class ButtonAppBar extends React.Component {
 }
 
 ButtonAppBar.propTypes = {
-  classes: PropTypes.object.isRequired,
-  onClickMenu: PropTypes.func.isRequired
+  classes: PropTypes.object.isRequired
 };
 
-const mapStateToProps = (state, ownProps) => {
-  return { auth: state.auth }
-}
-
-export default connect(mapStateToProps, { loginAction })(withStyles(styles)(ButtonAppBar));
+export default compose(withRouter, withStyles(styles))(ButtonAppBar);
