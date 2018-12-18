@@ -1,18 +1,22 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import { Provider } from 'react-redux'
-
-import { Header, Footer, Main } from "./layout";
+import { TestPage, HomePage } from "./pages";
 import configureStore from "./store";
+
+import { BrowserRouter as Router, Route, Link, Redirect, withRouter, Switch  } from "react-router-dom";
+
 class App extends Component {
   render() {
     return (
-      <Provider store={configureStore()}>
-        <Header />
-        <Main />
-        <Footer />
-      </Provider>
+        <Provider store={configureStore()}>     
+          <Router>
+            <Switch>            
+              <Route exact path="/" component={HomePage} />
+              <Route path="/test" component={TestPage} />
+            </Switch>
+          </Router>
+        </Provider>
     );
   }
 }

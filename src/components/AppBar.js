@@ -14,11 +14,6 @@ import Avatar from "@material-ui/core/Avatar";
 import { connect } from "react-redux";
 import { loginAction } from "../actions/authActions";
 
-
-const consoleLog = (_) => {
-  console.log(_)
-}
-
 const styles = {
   root: {
     flexGrow: 1,
@@ -30,6 +25,10 @@ const styles = {
     marginLeft: -12,
     marginRight: 20,
   },
+  loginImage:{
+    maxWidth: '100%',
+    maxHeight: '100%'
+  }
 };
 
 class ButtonAppBar extends React.Component {
@@ -52,20 +51,19 @@ class ButtonAppBar extends React.Component {
         autoLoad
         callback={this.loginCallback}
         render={renderProps => (
-          <Button onClick={renderProps.onClick}>Login</Button>
+          <Button onClick={renderProps.onClick}><img className={classes.loginImage} src="/static/images/facebook_icon.png"></img></Button>
         )}
       />;
 
     return (
       <div className={classes.root}>
-        <AppBar position="static">
+        <AppBar position="static" color="default">
           <Toolbar>
             <IconButton onClick={() => onClickMenu()} className={classes.menuButton} color="inherit" aria-label="Menu">
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" color="inherit" className={classes.grow}>
-              Play Ground
-          </Typography>
+            </Typography>
             {loginPart}
           </Toolbar>
         </AppBar>
