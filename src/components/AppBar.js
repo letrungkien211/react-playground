@@ -15,7 +15,8 @@ const styles = {
   root:{
     position: 'fixed',
     bottom: 0,
-    width: '100%'
+    width: '100%',
+    alignItems:'center'
   }
 };
 
@@ -47,7 +48,7 @@ class ButtonAppBar extends React.Component {
     },
   ]
 
-  handleChange = (evt, value)=>{
+  handleChange = (_, value)=>{
     this.props.history.push(this.list[value].path)
   }
 
@@ -57,13 +58,11 @@ class ButtonAppBar extends React.Component {
     console.log(location)
 
     return (
-      <div className={classes.root}>
-        <AppBar position="static">
+        <AppBar className={classes.root} position="static">
           <Tabs value={value} onChange={this.handleChange} scrollable scrollButtons="off">
             {this.list.map(x=> <Tab key={x.label} icon={x.icon} />)}
           </Tabs>
         </AppBar>
-      </div>
     );
   }
 }
